@@ -113,15 +113,19 @@ namespace EmployeeManagement.Controllers
             string UploadFolder = Path.Combine(hostingEnvironment.WebRootPath, "Images");
             UniqueFileName = Guid.NewGuid().ToString() + "_" + employees.Photo.FileName;
             string FilePath = Path.Combine(UploadFolder, UniqueFileName);
-            employees.Photo.CopyTo(new FileStream(FilePath, FileMode.Create));
+            using (var filestream = new FileStream(FilePath, FileMode.Create))
+            {
+                employees.Photo.CopyTo(filestream);
+            }
+           
             return UniqueFileName;
         }
 
         public ViewResult Delete(int id)
-            {
-             _employeeRepository.Delete(id);
+        {
+            _employeeRepository.Delete(id);
             var employees = _employeeRepository.GetAllEmployee();
             return View("Index", employees);
-            }
+        }
     }
 }
