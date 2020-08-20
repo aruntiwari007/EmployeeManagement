@@ -1,0 +1,20 @@
+﻿@model IEnumerable<EmployeeManagement.Models.Employees>
+@{
+    ViewBag.Title = "Employee List";
+}
+<div class="card-deck">
+    @foreach (var employee in Model)
+    {
+        <div class="card m-3">
+            <div class="card-header">
+                <h3>@employee.Name</h3>
+            </div>
+            <img class="card-img-top" src="~/images/images.png" />
+            <div class="card-footer text-center">
+                <a href="/home/details/@employee.Id" class="btn btn-primary m-1">View</a>
+                <a href="#" class="btn btn-primary m-1">Edit</a>
+                <a href="#" class="btn btn-danger m-1">Delete</a>
+            </div>
+        </div>
+    }
+</div>
