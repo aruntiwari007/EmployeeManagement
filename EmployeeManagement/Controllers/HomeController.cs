@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,8 +23,7 @@ namespace EmployeeManagement.Controllers
         public ViewResult Index()
         {
             var model = _employeeRepository.GetAllEmployee();
-            return View(model);
-                //Json(new { id = 1, name = "arun" });
+            return View(model);          
         }
         public ViewResult Details(int? id)        
         {           
@@ -32,8 +32,7 @@ namespace EmployeeManagement.Controllers
                 employees = _employeeRepository.GetEmployees(id??1),
                 PageTitle = "Employee Details"
         };
-            return View(homeDetailsViewModel);
-            //Json(new { id = 1, name = "arun" });
+            return View(homeDetailsViewModel);          
         }
 
         [HttpGet]
@@ -50,10 +49,10 @@ namespace EmployeeManagement.Controllers
             {             
                 if(employees.Photo != null)
                 {
-                    string UploadFolder = Path.Combine(hostingEnvironment.WebRootPath, "Images");
-                    UniqueFileName = Guid.NewGuid().ToString() + "_" + employees.Photo.FileName;
-                    string FilePath = Path.Combine(UploadFolder, UniqueFileName);
-                    employees.Photo.CopyTo(new FileStream(FilePath, FileMode.Create));
+                    if (employees.Photo != null)
+                    {
+                        UniqueFileName = ProcessUploadingPhoto(employees);
+                    }
                 }
                 Employees emp = new Employees()
                 {
@@ -67,5 +66,62 @@ namespace EmployeeManagement.Controllers
             }
             return View();
         }
+       [HttpGet]
+        public ViewResult Edit(int id)
+        {
+            Employees employees = _employeeRepository.GetEmployees(id);
+            EmployeeEditViewModel employeeEditViewModel = new EmployeeEditViewModel()
+            {
+                Id = employees.Id,
+                Name = employees.Name,
+                Department = employees.Department,
+                Email = employees.Email,
+                ExistingPhotoPath= employees.PhotoPath              
+            };
+            return View(employeeEditViewModel);
+        }
+        [HttpPost]
+        public IActionResult Edit(EmployeeEditViewModel employees)
+        {
+            string UniqueFileName = string.Empty;
+            if (ModelState.IsValid)
+            {
+                Employees _emp = _employeeRepository.GetEmployees(employees.Id);
+                _emp.Name = employees.Name;
+                _emp.Email = employees.Email;
+                _emp.Department = employees.Department;
+
+                if (employees.Photo != null)
+                {
+                    if(employees.ExistingPhotoPath != null)
+                    {
+                        string filepath = Path.Combine(hostingEnvironment.WebRootPath,"images",employees.ExistingPhotoPath);
+                        System.IO.File.Delete(filepath);
+                    }
+                    _emp.PhotoPath = ProcessUploadingPhoto(employees);
+                }
+               
+                _employeeRepository.Update(_emp);
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
+        private string ProcessUploadingPhoto(EmployeeCreateViewModel employees)
+        {
+            string UniqueFileName;
+            string UploadFolder = Path.Combine(hostingEnvironment.WebRootPath, "Images");
+            UniqueFileName = Guid.NewGuid().ToString() + "_" + employees.Photo.FileName;
+            string FilePath = Path.Combine(UploadFolder, UniqueFileName);
+            employees.Photo.CopyTo(new FileStream(FilePath, FileMode.Create));
+            return UniqueFileName;
+        }
+
+        public ViewResult Delete(int id)
+            {
+             _employeeRepository.Delete(id);
+            var employees = _employeeRepository.GetAllEmployee();
+            return View("Index", employees);
+            }
     }
 }

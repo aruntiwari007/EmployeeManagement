@@ -21,7 +21,7 @@ namespace EmployeeManagement.Models
 
         public Employees Delete(int Id)
         {
-            Employees employees = context.employee.Find();
+            Employees employees = context.employee.Find(Id);
            if(employees != null)
             {
                 context.employee.Remove(employees);
