@@ -24,12 +24,19 @@ namespace EmployeeManagement.Controllers
         {
             var model = _employeeRepository.GetAllEmployee();
             return View(model);          
-        }
+        }      
         public ViewResult Details(int? id)        
-        {           
+        {
+            throw new Exception("Error occured..!");
+            Employees _employees = _employeeRepository.GetEmployees(id.Value);
+            if(_employees == null)
+            {
+                Response.StatusCode = 404;
+                return View("EmployeeNotFound", id.Value);
+            }
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
             {
-                employees = _employeeRepository.GetEmployees(id??1),
+                employees = _employees,
                 PageTitle = "Employee Details"
         };
             return View(homeDetailsViewModel);          

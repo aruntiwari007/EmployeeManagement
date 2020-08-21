@@ -44,6 +44,11 @@ namespace EmployeeManagement
                 //};
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            }
             //DefaultFilesOptions _defaultFilesOptions = new DefaultFilesOptions();
             //_defaultFilesOptions.DefaultFileNames.Clear();
             //_defaultFilesOptions.DefaultFileNames.Add("test.html");
