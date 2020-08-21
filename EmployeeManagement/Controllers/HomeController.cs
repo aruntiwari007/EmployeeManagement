@@ -2,6 +2,7 @@
 using EmployeeManagement.ViewModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,10 +16,14 @@ namespace EmployeeManagement.Controllers
     {
         private IHostingEnvironment hostingEnvironment;
         private IEmployeeRepository _employeeRepository;
-        public HomeController(IEmployeeRepository employeeRepository, IHostingEnvironment hostingEnvironment)
+        private ILogger logger;
+        public HomeController(IEmployeeRepository employeeRepository,
+                              IHostingEnvironment hostingEnvironment,
+                              ILogger<HomeController> logger)
         {
             _employeeRepository = employeeRepository;
             this.hostingEnvironment = hostingEnvironment;
+            this.logger = logger;
         }
         public ViewResult Index()
         {
@@ -27,7 +32,11 @@ namespace EmployeeManagement.Controllers
         }      
         public ViewResult Details(int? id)        
         {
-            throw new Exception("Error occured..!");
+            logger.LogTrace("log trace message...!");
+            logger.LogDebug("LogDebug message...!");
+            logger.LogInformation("LogInformation message...!");
+            logger.LogWarning("LogWarning message...!");
+            logger.LogError("LogError message...!");
             Employees _employees = _employeeRepository.GetEmployees(id.Value);
             if(_employees == null)
             {

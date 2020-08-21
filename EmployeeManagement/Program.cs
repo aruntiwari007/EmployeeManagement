@@ -27,7 +27,7 @@ namespace EmployeeManagement
                  loggingBuilder.AddDebug();
                  loggingBuilder.AddEventSourceLogger();
                  //enable nlog thirt part error logger to save error details.
-                 loggingBuilder.AddNLog();
+                 loggingBuilder.AddNLog();                 
              })
             
                 .ConfigureWebHostDefaults(webBuilder =>
