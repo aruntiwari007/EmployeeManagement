@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject SignInManager<IdentityUser> signInManager;
 
+<!DOCTYPE html>
 <html>
 <head>
     <link href="~/css/site.css" rel="stylesheet" />
@@ -33,14 +34,29 @@
                         <a class="nav-link" asp-controller="home" asp-action="create">Create</a>
                     </li>
                     </ul>
-                    <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ml-auto">
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item">
+                          <form method="post" asp-action="Logout" asp-controller="account">
+                              <button type="submit" class="nav-link btn btn-link py-0" style="width:auto">
+                                  Logout @User.Identity.Name
+                              </button>
+                          </form>
+                        </li>
+                    }
+                    else
+                    {
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
                         </li>
-                    </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                    }
+                </ul>
 </div>
         </nav>
-
         <div> @RenderBody()</div>
         @if(IsSectionDefined("Scripts"))
         {

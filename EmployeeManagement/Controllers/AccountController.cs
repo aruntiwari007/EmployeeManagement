@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EmployeeManagement.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using NLog.Web.LayoutRenderers;
 
 namespace EmployeeManagement.Controllers
@@ -18,10 +19,8 @@ namespace EmployeeManagement.Controllers
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
-        }
-
-        public SignInManager<IdentityUser> SignInManager { get; }
-
+        }   
+       
         [HttpGet]
         public IActionResult Register()
         {
@@ -46,6 +45,34 @@ namespace EmployeeManagement.Controllers
                 }
             }
             return View();
-        }    
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                ModelState.AddModelError("", "Invalid Attempt");
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

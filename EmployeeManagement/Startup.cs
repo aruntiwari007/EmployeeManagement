@@ -32,9 +32,16 @@ namespace EmployeeManagement
                 Options => Options.UseSqlServer(_confiq.GetConnectionString("EmployeeDbConnection")));
             services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>();
 
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredUniqueChars = 3;
+            }).AddEntityFrameworkStores<AppDbContext>();
+
+            services.Configure<IdentityOptions>(options =>
+               {
+                   options.Password.RequiredLength = 10;//code for override the exsting validation of password                  
+               });
 
 
         }      
