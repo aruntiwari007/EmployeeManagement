@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmployeeManagement
 {
@@ -30,8 +31,12 @@ namespace EmployeeManagement
             services.AddDbContextPool<AppDbContext>(
                 Options => Options.UseSqlServer(_confiq.GetConnectionString("EmployeeDbConnection")));
             services.AddMvc(options => options.EnableEndpointRouting = false);
-            services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>(); 
-          
+            services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>();
+
+
+
         }      
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -58,6 +63,7 @@ namespace EmployeeManagement
           app.UseStaticFiles();
             // app.UseMvcWithDefaultRoute();
             //  app.UseFileServer();
+            app.UseAuthentication();
             app.UseMvc(configureRoutes => { configureRoutes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
