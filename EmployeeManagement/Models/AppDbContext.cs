@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.Models
 {
-    public class AppDbContext : IdentityDbContext //DbContext
+    public class AppDbContext : IdentityDbContext<ApplicationUser> //DbContext   //pass extended class as generic prm
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
