@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagement.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
@@ -21,12 +22,27 @@ namespace EmployeeManagement.Controllers
             this.signInManager = signInManager;
         }   
        
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
+        [AcceptVerbs("Get","Post")]
+        [AllowAnonymous]        
+        public async Task<IActionResult> isEmailInUse(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return Json(true);
+            }
+            else
+                return Json($"Email {email} is already in use");
+        }
+
+            [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -47,6 +63,7 @@ namespace EmployeeManagement.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
         {
@@ -54,13 +71,19 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login(LoginViewModel model)
+        [AllowAnonymous]      
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    if(! string.IsNullOrEmpty(returnUrl))
+                    {
+                        LocalRedirect(returnUrl); // Redirect(returnUrl); or check url.islocalUrl Method
+                    }
+                    else
                     return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError("", "Invalid Attempt");
@@ -68,6 +91,7 @@ namespace EmployeeManagement.Controllers
             return View(model);
         }
 
+        
         [HttpPost]
         public async Task<ActionResult> Logout()
         {

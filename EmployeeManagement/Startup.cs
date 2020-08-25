@@ -13,10 +13,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace EmployeeManagement
-{
-    
+{    
     public class Startup
     {
         private IConfiguration _confiq;
@@ -30,7 +31,15 @@ namespace EmployeeManagement
         {
             services.AddDbContextPool<AppDbContext>(
                 Options => Options.UseSqlServer(_confiq.GetConnectionString("EmployeeDbConnection")));
-            services.AddMvc(options => options.EnableEndpointRouting = false);
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                                  .RequireAuthenticatedUser()
+                                  .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+                options.EnableEndpointRouting = false;
+            }).AddXmlSerializerFormatters(); // add for giv the response in xaml format
+          
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>

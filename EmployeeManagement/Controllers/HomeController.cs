@@ -1,5 +1,6 @@
 ﻿using EmployeeManagement.Models;
 using EmployeeManagement.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private IHostingEnvironment hostingEnvironment;
@@ -25,11 +27,13 @@ namespace EmployeeManagement.Controllers
             this.hostingEnvironment = hostingEnvironment;
             this.logger = logger;
         }
+        [AllowAnonymous]
         public ViewResult Index()
         {
             var model = _employeeRepository.GetAllEmployee();
             return View(model);          
-        }      
+        }     
+        [AllowAnonymous]
         public ViewResult Details(int? id)        
         {
             logger.LogTrace("log trace message...!");
