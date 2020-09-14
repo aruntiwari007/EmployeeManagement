@@ -34,7 +34,7 @@ namespace EmployeeManagement
             services.AddMvc(options =>
             {
                 var policy = new AuthorizationPolicyBuilder()
-                                  .RequireAuthenticatedUser()
+                                  .RequireAuthenticatedUser()                                
                                   .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
                 options.EnableEndpointRouting = false;

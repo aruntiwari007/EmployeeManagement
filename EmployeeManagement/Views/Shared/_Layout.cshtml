@@ -30,22 +30,32 @@
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="home" asp-action="index">List</a>
+                        <a class="nav-link" asp-controller="home" asp-action="index">List of User</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="home" asp-action="create">Create</a>
+                        <a class="nav-link" asp-controller="home" asp-action="create">Create User</a>
                     </li>
-                    </ul>
+                    @if (signInManager.IsSignedIn(User))                    {
+                       
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Administration" asp-action="CreateRole">Create New Role</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Administration" asp-action="ListRoles">List of Roles</a>
+                        </li>
+                    }
+                </ul>
                 <ul class="navbar-nav ml-auto">
                     @if (signInManager.IsSignedIn(User))
-                    {
+                    {                      
                         <li class="nav-item">
-                          <form method="post" asp-action="Logout" asp-controller="account">
-                              <button type="submit" class="nav-link btn btn-link py-0" style="width:auto">
-                                  Logout @User.Identity.Name
-                              </button>
-                          </form>
+                            <form method="post" asp-action="Logout" asp-controller="account">
+                                <button type="submit" class="nav-link btn btn-link py-0" style="width:auto">
+                                    Logout @User.Identity.Name
+                                </button>
+                            </form>
                         </li>
+
                     }
                     else
                     {
